@@ -4,30 +4,81 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public float posMinX = -10f;
-    public float posMaxX = 10f;
-    public float posMinY = 5f;
-    public float posMaxY = -5f;
-    public GameObject myPrefab;
+    public HUDManager HUD;
+    public bool isPlaying = false, iniciar = false, parar = false;
+    private float tiempo = 0;
+    private static GameManager _instance;
 
-    void Start()
+    public static GameManager Instance
     {
-        //Llamamos al metodo spawnprefab al iniciar y luego cada 2 segundos
-        InvokeRepeating(nameof(SpawnPrefab), 0f, 2f);
+        get => _instance;
     }
 
-    //Asigna una posicion aleatoria y lo mueve hacia la izda
-    void SpawnPrefab()
+    void Awake()
     {
-        //recogemos la posicion del prefab
-        Vector3 posicion = transform.position;
-        //para que salga siempre desde la posicion maxima de la izda
-        posicion.x = posMaxX;
-        posicion.y = Random.Range(posMinY, posMaxY);
-        //le asginamos a la posicion la nueva aleatoria que hemos creado
-        transform.position = posicion;
-        Debug.Log($"Posición aleatoria bichito: {posicion}");
-        //Instancia del prefab
-        Instantiate(myPrefab, posicion, Quaternion.identity);
+        if (_instance == null)
+            _instance = this;
+    }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        isPlaying = false;
+        HUD.aviso.enabled = true;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            if (!isPlaying)
+            {
+                isPlaying = true;
+                iniciar = true;
+                HUD.aviso.enabled = false;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (isPlaying)
+            {
+                isPlaying = false;
+                parar = true;
+                HUD.aviso.enabled = true;
+            }
+        }
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            #if UNITY_EDITOR
+                // Application.Quit() does not work in the editor so
+                // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+                UnityEditor.EditorApplication.isPlaying = false;
+            #else
+                    Application.Quit();
+            #endif
+
+        }
+        if (isPlaying)
+        {
+            ContarTiempo();
+        }            
+    }
+
+    void ContarTiempo()
+    {
+        tiempo += Time.deltaTime;
+        HUD.MostrarTiempo(tiempo);
+    }
+
+    public void Crash()
+    {
+        HUD.Choque();
+    }
+
+    public void CountHit()
+    {
+        Debug.Log("entra en count");
+        HUD.ContarAciertos();
     }
 }
