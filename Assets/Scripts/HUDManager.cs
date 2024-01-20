@@ -11,6 +11,7 @@ public class HUDManager : MonoBehaviour
     public TextMeshProUGUI contador;
     public int numContador = 0;
 
+    //Se llama al activarse
     private void Awake()
     {
         GameManager.Instance.HUD = this;
@@ -20,22 +21,26 @@ public class HUDManager : MonoBehaviour
         contador = GameObject.Find("Contador").GetComponent<TextMeshProUGUI>();
     }
 
+    //Valores inciales de los text
     private void Start()
     {
         choque.text = "¡Cuidado!";
         choque.color = new Color(choque.color.r, choque.color.g, choque.color.b, 0);
-        aviso.text = "Pulsa Space para inciar, ESC para parar el juego, S para salir y D para disparar";
+        aviso.text = "Pulsa Space para inciar, ESC para parar el juego, Z para salir y F para disparar";
     }
+
+    //Muestra el tiempo en el text
     public void MostrarTiempo(float time)
     {
         tiempo.text = $"{Mathf.Floor(time / 60):00}:{Mathf.Floor(time % 60):00}:{(time - (int)time) * 100f:00}";
     }
 
+    //Crea un efecto de desvanecimiento para el cartel que se muestra
+    //cuando la nave colisiona con un meteorito, utilizando una corrutina.
     public void Choque()
     {
         StartCoroutine(nameof(Fade));
     }
-
     IEnumerator Fade()
     {
         for (float f = 10; f >= 0; f--)
@@ -47,9 +52,11 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    //Muestra y modifica el text del contador de meteroritos acertados con el laser.
+    //Aumenta en 1 por meteorito
     public void ContarAciertos()
     {
         numContador++;
-        contador.text = $"Contador: {numContador}";
+        contador.text = $"Meteors: {numContador}";
     }
 }

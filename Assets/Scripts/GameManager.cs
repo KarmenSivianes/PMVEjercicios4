@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     private float tiempo = 0;
     private static GameManager _instance;
 
+    //Instancia para poder usarlo en las otras clases
     public static GameManager Instance
     {
         get => _instance;
@@ -23,6 +24,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Empezamos con el juego parado y mostrando el mensaje
         isPlaying = false;
         HUD.aviso.enabled = true;
     }
@@ -30,15 +32,17 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Tecla Espacio inicia o reaunda el juego y por tanto el tiempo
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (!isPlaying)
             {
                 isPlaying = true;
                 iniciar = true;
-                HUD.aviso.enabled = false;
+                HUD.aviso.enabled = false;                
             }
         }
+        //Tecla Escape para el juego y por tanto el tiempo
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPlaying)
@@ -48,37 +52,35 @@ public class GameManager : MonoBehaviour
                 HUD.aviso.enabled = true;
             }
         }
-        if (Input.GetKeyDown(KeyCode.S))
+        //Tecla Z cierra el juego solo si el juego esta parado.
+        if (Input.GetKeyDown(KeyCode.Z))
         {
-            #if UNITY_EDITOR
-                // Application.Quit() does not work in the editor so
-                // UnityEditor.EditorApplication.isPlaying need to be set to false to end the game
+            if (!isPlaying)
                 UnityEditor.EditorApplication.isPlaying = false;
-            #else
-                    Application.Quit();
-            #endif
-
         }
+        //Si el juego esta en marcha se activa el tiempo
         if (isPlaying)
         {
             ContarTiempo();
         }            
     }
 
+    //Llama a la funcion que muestra el tiempo en pantalla de la clase HUD
     void ContarTiempo()
     {
         tiempo += Time.deltaTime;
         HUD.MostrarTiempo(tiempo);
     }
 
+    //Llama a la funcion que gestiona la colision en la clase HUD
     public void Crash()
     {
         HUD.Choque();
     }
 
+    //Llama a la funcion que gestiona el contador de aciertos de la clase HUD
     public void CountHit()
     {
-        Debug.Log("entra en count");
         HUD.ContarAciertos();
     }
 }

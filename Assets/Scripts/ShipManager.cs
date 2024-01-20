@@ -5,20 +5,20 @@ using UnityEngine;
 public class ShipManager : MonoBehaviour
 {
     float shipSpeed = 5.0f;
-    //private GameObject space;
     private Vector3 inicial;
-
     public GameObject shootPrefab;
     public SpriteRenderer laserSpriteRenderer;
-    private bool _canFire = true;
 
+    //Indicamos valores inciales de posición de la nave en la pantalla
     void Start()
     {
         inicial.x = 9f;
         inicial.y = 2.5f;
-        //space = GameObject.FindGameObjectWithTag("Space");
-        //final = space.transform.position;
     }
+
+    //Se ejecuta a cada frame.
+    //Gestiona el movimiento de la nave. Posibilidad de movimiento en todas direcciones.
+    //Gestiona el disparo de la nave que se activa al pulsar la tecla F.
     void Update()
     {
         if (GameManager.Instance.isPlaying)
@@ -30,31 +30,19 @@ public class ShipManager : MonoBehaviour
             //update the position
             transform.Translate(new Vector3(horizontalInput, verticalInput, 0));
 
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKeyDown(KeyCode.F))
             {
-                if (_canFire)
-                {
-                    //_canFire = false;
-                    GameObject go = Instantiate(shootPrefab);
-                    //go.transform.position = this.transform.position;
-                    go.transform.position = laserSpriteRenderer.gameObject.transform.position;
-                    go.GetComponent<ControlShoot>().shipManager = this;
-                    //laserSpriteRenderer.enabled = false;
-                }
+                GameObject go = Instantiate(shootPrefab);
+                go.transform.position = laserSpriteRenderer.gameObject.transform.position;
+                go.GetComponent<ControlShoot>().shipManager = this;
             }
         }
     }
-    public void CanFire()
-    {
-        _canFire = true;
-        laserSpriteRenderer.enabled = true;
-    }
 
+    //Comprueba si la nave ha colisionado con un meteorito y muestra un mensaje de advertencia
     private void OnTriggerEnter2D(Collider2D collision)
     {        
         if (collision.CompareTag("Meteor"))
             GameManager.Instance.Crash();
-        //else if (collision.CompareTag("Space"))
-            //space.transform.position = final;
     }
 }
